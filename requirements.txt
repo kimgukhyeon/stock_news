@@ -1,4 +1,7 @@
-yfinance
+finance-datareader
+pandas
+tabulate
+yfinance<1.0.0
 requests
 google-generativeai
 beautifulsoup4

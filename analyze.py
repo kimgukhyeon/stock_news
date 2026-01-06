@@ -10,6 +10,7 @@ from src.checkers.warning import check_warning
 def main():
     parser = argparse.ArgumentParser(description="KRX 종목 지정 요건 검사기")
     parser.add_argument("code", type=str, help="종목코드 (예: 삼성전자 005930)")
+    parser.add_argument("--date", type=str, help="검사 기준 날짜 (YYYY-MM-DD)", default=None)
     args = parser.parse_args()
     
     print(f"{args.code} 데이터 조회 중...")
@@ -18,6 +19,14 @@ def main():
     if df is None:
         print("데이터 조회 실패. 종목코드를 확인해주세요.")
         sys.exit(1)
+
+    # If a date is provided, filter the dataframe to include data only up to that date
+    if args.date:
+        print(f"기준일자 변경: {args.date} (이후 데이터 제외)")
+        df = df[df.index <= args.date]
+        if df.empty:
+            print(f"해당 날짜({args.date}) 이전 데이터가 없습니다.")
+            sys.exit(1)
         
     print("지표 계산 중...")
     df = calculate_indicators(df)

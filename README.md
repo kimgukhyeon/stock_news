@@ -36,10 +36,27 @@ WP_APP_PASSWORD=your_application_password
 GEMINI_API_KEY=your_gemini_api_key
 ```
 
+
 ### 3. 실행
 
+#### 주식 지정 요건 분석 (`analyze.py`)
+
+특정 종목에 대해 투자주의/단기과열 지정 요건을 분석하려면:
+
 ```bash
-python run_automation.py
+# 기본 실행 (오늘 기준)
+python analyze.py 005930
+
+# 특정 날짜 기준 실행 (과거 데이터 분석 시 유용)
+python analyze.py 274090 --date 2026-01-05
+```
+
+#### 블로그 자동화 (`main.py`)
+
+매일 정해진 시간에 로직에 따라 자동 실행됩니다:
+
+```bash
+python main.py
 ```
 
 또는 `run_automation.bat` 파일을 실행하여 간편하게 실행할 수 있습니다.

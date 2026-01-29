@@ -8,3 +8,17 @@ __pycache__/
 miniapp-web/node_modules/
 miniapp-web/dist/
 miniapp-web/.vite/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs and databases
+*.log
+*.sqlite3

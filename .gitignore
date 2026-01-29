@@ -1,3 +1,10 @@
 .env
 __pycache__/
 *.pyc
+.venv/
+.python-version
+
+# Frontend (miniapp)
+miniapp-web/node_modules/
+miniapp-web/dist/
+miniapp-web/.vite/

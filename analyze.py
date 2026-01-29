@@ -71,7 +71,9 @@ def main():
                 status = "충족" if v.get('triggered') else "미충족"
                 val = v.get('val')
                 thresh = v.get('threshold')
-                print(f"  - {k}: {val:.2%} >= {thresh:.2%} ? [{status}]")
+                target_price = v.get('target_price')
+                tp_str = f" (대상가: {target_price:,.0f})" if target_price is not None else ""
+                print(f"  - {k}: {val:.2%} >= {thresh:.2%} ? [{status}]{tp_str}")
             
     print("-" * 40)
     
@@ -85,7 +87,9 @@ def main():
                 status = "충족" if v.get('triggered') else "미충족"
                 val = v.get('val')
                 thresh = v.get('threshold')
-                print(f"  - {k}: {val:.2%} >= {thresh:.2%} ? [{status}]")
+                target_price = v.get('target_price')
+                tp_str = f" (대상가: {target_price:,.0f})" if target_price is not None else ""
+                print(f"  - {k}: {val:.2%} >= {thresh:.2%} ? [{status}]{tp_str}")
 
 if __name__ == "__main__":
     main()

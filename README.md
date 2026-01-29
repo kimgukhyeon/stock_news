@@ -5,17 +5,17 @@
 ## 주요 기능
 
 1.  **데이터 수집 자동화**:
-    *   **화요일 ~ 토요일**: 전날의 나스닥(NASDAQ) 시장 데이터를 수집합니다. (`yfinance` 사용)
-    *   **일요일 ~ 월요일**: 구글 파이낸스(Google Finance)에서 주요 금융 뉴스를 크롤링합니다.
+    - **화요일 ~ 토요일**: 전날의 나스닥(NASDAQ) 시장 데이터를 수집합니다. (`yfinance` 사용)
+    - **일요일 ~ 월요일**: 구글 파이낸스(Google Finance)에서 주요 금융 뉴스를 크롤링합니다.
 2.  **AI 콘텐츠 생성 (SEO 최적화)**:
-    *   수집된 데이터를 바탕으로 Google Gemini API를 사용하여 한국어 블로그 포스팅을 작성합니다.
-    *   **구조화된 템플릿**: 제목, 서론, 주요 요점, 상세 분석, 결론으로 구성된 체계적인 글을 작성합니다.
-    *   **SEO 강화**: 메타 설명(Meta Description)과 태그(Tags)를 자동으로 생성하여 검색 엔진 최적화를 지원합니다.
-    *   HTML 형식(H2, H3, 리스트 등)으로 포맷팅되어 가독성을 높입니다.
+    - 수집된 데이터를 바탕으로 Google Gemini API를 사용하여 한국어 블로그 포스팅을 작성합니다.
+    - **구조화된 템플릿**: 제목, 서론, 주요 요점, 상세 분석, 결론으로 구성된 체계적인 글을 작성합니다.
+    - **SEO 강화**: 메타 설명(Meta Description)과 태그(Tags)를 자동으로 생성하여 검색 엔진 최적화를 지원합니다.
+    - HTML 형식(H2, H3, 리스트 등)으로 포맷팅되어 가독성을 높입니다.
 3.  **워드프레스 자동 포스팅 및 카테고리 관리**:
-    *   생성된 콘텐츠를 워드프레스 REST API를 통해 자동으로 게시합니다.
-    *   **카테고리 자동 관리**: '미국주식', '한국주식' 카테고리를 자동으로 생성하고 글을 분류합니다. (현재는 주로 '미국주식'에 할당)
-    *   태그 및 요약글(Excerpt)도 함께 등록됩니다.
+    - 생성된 콘텐츠를 워드프레스 REST API를 통해 자동으로 게시합니다.
+    - **카테고리 자동 관리**: '미국주식', '한국주식' 카테고리를 자동으로 생성하고 글을 분류합니다. (현재는 주로 '미국주식'에 할당)
+    - 태그 및 요약글(Excerpt)도 함께 등록됩니다.
 
 ## 설치 및 실행 방법
 
@@ -24,6 +24,45 @@
 ```bash
 pip install -r requirements.txt
 ```
+
+## 앱인토스(미니앱) 개발용 실행 방법 (WebView)
+
+이 저장소는 원래 파이썬 스크립트 형태였지만, 앱인토스(WebView)에서 사용할 수 있도록 아래 2개를 추가했습니다.
+
+- `api/`: 기존 분석 로직을 감싼 FastAPI 서버 (`GET /api/stock/{code}`)
+- `miniapp-web/`: WebView에서 띄울 프론트엔드(Vite + React)
+
+### 1) 백엔드(API) 실행
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+python run_api.py
+# http://localhost:20000/health  (포트를 20000으로 변경한 경우)
+```
+
+### 2) 프론트(미니앱 WebView) 실행
+
+> Node 16 환경을 고려해 Vite 4 기반으로 구성되어 있습니다.
+
+```bash
+cd miniapp-web
+npm install
+npm run dev
+# http://localhost:5173
+```
+
+### 3) 앱인토스에서 로컬 개발 서버 연결
+
+- 같은 Wi-Fi/네트워크에서 휴대폰(토스 앱/샌드박스)에서 `http://<내PC IP>:5173` 로 접속하도록 설정합니다.
+- 문서: `https://developers-apps-in-toss.toss.im/development/local-server.md`
+
+### 4) API 호출 예시
+
+- `GET /api/stock/005930`
+- `GET /api/stock/274090?date=2026-01-05`
 
 ### 2. 환경 변수 설정 (.env)
 
@@ -35,7 +74,6 @@ WP_USERNAME=your_username
 WP_APP_PASSWORD=your_application_password
 GEMINI_API_KEY=your_gemini_api_key
 ```
-
 
 ### 3. 실행
 
@@ -63,10 +101,10 @@ python main.py
 
 ## 파일 구조
 
-*   `run_automation.py`: 메인 자동화 스크립트 (카테고리 로직 및 SEO 프롬프트 포함)
-*   `requirements.txt`: 필요한 파이썬 라이브러리 목록
-*   `.env`: 환경 변수 (GitHub에 업로드되지 않음)
-*   `.gitignore`: Git 제외 파일 목록
+- `run_automation.py`: 메인 자동화 스크립트 (카테고리 로직 및 SEO 프롬프트 포함)
+- `requirements.txt`: 필요한 파이썬 라이브러리 목록
+- `.env`: 환경 변수 (GitHub에 업로드되지 않음)
+- `.gitignore`: Git 제외 파일 목록
 
 ## 라이선스
 

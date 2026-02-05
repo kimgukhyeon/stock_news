@@ -14,7 +14,7 @@ def check_warning(df):
     - 초단기 급등: 3일 전 종가 대비 +100% 이상
     - 단기 급등: 5일 전 종가 대비 +60% 이상
     - 중장기 급등: 15일 전 종가 대비 +100% 이상
-    - 투자주의종목 반복지정(근사): 최근 15일 중 투자주의(본 프로젝트 기준) 5일 이상 + 15일 전 대비 +75% 이상
+    - 중장기 급등: 15일 전 종가 대비 +100% 이상
 
     Returns: (is_triggered, details)
     """
@@ -38,41 +38,23 @@ def check_warning(df):
     current_close = float(latest["Close"])
     is_highest_close_15d = current_close >= max_close_15
 
+    caution_days = 0
+    # Investment caution repeat logic removed per user request
+
     # Thresholds (지정예고요건)
     thresh_3d = 1.00   # 초단기 급등
     thresh_5d = 0.60   # 단기 급등
     thresh_15d = 1.00  # 중장기 급등
-    thresh_caution_repeat_15d_rise = 0.75  # 투자주의 반복지정 케이스의 가격 요건
-
-    # 투자주의 반복지정(근사): 최근 15일 중 5일 이상 투자주의
-    # - 본 코드베이스는 계좌/불건전요건 없이 '가격/거래량 기반 투자주의'만 판단 가능
-    caution_days = 0
-    try:
-        # local import to avoid circulars at module load
-        from src.checkers.caution import check_caution
-        for i in range(len(df) - 15, len(df)):
-            sub = df.iloc[: i + 1]
-            ca, _ = check_caution(sub)
-            if ca:
-                caution_days += 1
-    except Exception:
-        caution_days = 0
 
     cond_3d = is_highest_close_15d and (change_3d >= thresh_3d)
     cond_5d = is_highest_close_15d and (change_5d >= thresh_5d)
     cond_15d = is_highest_close_15d and (change_15d >= thresh_15d)
 
-    cond_caution_repeat = (
-        is_highest_close_15d
-        and (caution_days >= 5)
-        and (change_15d >= thresh_caution_repeat_15d_rise)
-    )
-
     target_price_3d = price_3d_ago * (1 + thresh_3d) if price_3d_ago is not None else None
     target_price_5d = price_5d_ago * (1 + thresh_5d) if price_5d_ago is not None else None
     target_price_15d = price_15d_ago * (1 + thresh_15d) if price_15d_ago is not None else None
 
-    is_triggered = cond_3d or cond_5d or cond_15d or cond_caution_repeat
+    is_triggered = cond_3d or cond_5d or cond_15d
 
     details = {
         "초단기급등(3일)": {
@@ -98,20 +80,7 @@ def check_warning(df):
             "target_price": target_price_15d,
             "at_max": is_highest_close_15d,
             "description": "당일 종가가 15일 전날 종가 대비 100% 이상 상승 (+ 최근 15일 종가 최고가)",
-        },
-        "투자주의반복(15일중5일이상)+75%": {
-            "val": change_15d,
-            "threshold": thresh_caution_repeat_15d_rise,
-            "triggered": bool(cond_caution_repeat),
-            "target_price": (
-                price_15d_ago * (1 + thresh_caution_repeat_15d_rise)
-                if price_15d_ago is not None
-                else None
-            ),
-            "at_max": is_highest_close_15d,
-            "description": "최근 15일 중 5일 이상(프로젝트 기준) 투자주의 + 15일 전 대비 75% 이상 상승 (+ 최근 15일 종가 최고가)",
-            "caution_days_last_15": caution_days,
-        },
+        }
     }
 
     return is_triggered, details

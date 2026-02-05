@@ -7,7 +7,6 @@ def check_caution(df):
     1. 소수계좌거래집중종목: 최근 3일간 주가상승률 15% 이상 (시장지수 8% 이상일 경우 25% 이상)
     2. 종가급변종목: 종가가 직전가격 대비 5% 이상 상승(하락) + 거래량 3만주 이상
     3. 15일간 상승종목: 최근 15일간 주가상승률 75% 이상
-    4. 특정계좌(군) 매매관여 과다: 최근 3일간 주가상승률 15% 이상 (시장지수 8% 이상일 경우 25% 이상)
     
     Returns: (is_triggered, details)
     """
@@ -65,14 +64,11 @@ def check_caution(df):
     # 3. 15일간 상승종목 (15일 75% 이상)
     cond_15d_rise = change_15d >= thresh_15d_caution
     
-    # 4. 특정계좌(군) 매매관여 과다 (3일 15% 이상 + 거래량 3만주 이상)
-    cond_specific_account = cond_3d_rise and cond_3d_volume
-    
     target_price_3d = price_3d_ago * (1 + thresh_3d_caution_normal) if price_3d_ago is not None else None
     target_price_15d = price_15d_ago * (1 + thresh_15d_caution) if price_15d_ago is not None else None
-    
+
     # 투자주의종목: 위 조건 중 하나라도 충족
-    is_triggered = cond_minority_account or cond_close_abrupt or cond_15d_rise or cond_specific_account
+    is_triggered = cond_minority_account or cond_close_abrupt or cond_15d_rise
     
     details = {
         "소수계좌거래집중(3일)": {
@@ -99,15 +95,6 @@ def check_caution(df):
             "triggered": bool(cond_15d_rise),
             "target_price": target_price_15d,
             "description": "최근 15일간 주가상승률 75% 이상"
-        },
-        "특정계좌(군)매매관여과다": {
-            "val": change_3d,
-            "threshold": thresh_3d_caution_normal,
-            "triggered": bool(cond_specific_account),
-            "target_price": target_price_3d,
-            "volume": recent_3d_vol,
-            "volume_threshold": thresh_3d_volume,
-            "description": "최근 3일간 주가상승률 15% 이상 + 일평균거래량 3만주 이상"
         }
     }
     

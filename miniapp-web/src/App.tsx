@@ -144,14 +144,134 @@ function DetailsTable({ details }: { details: Details }) {
   );
 }
 
+function PiggyIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      width="140"
+      height="140"
+      viewBox="0 0 140 140"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      {/* shadow */}
+      <ellipse cx="70" cy="118" rx="46" ry="10" fill="rgba(0,0,0,0.06)" />
+      {/* body */}
+      <path
+        d="M32 78c0-24 20-44 45-44h10c21 0 38 15 38 34 0 20-14 35-35 38l-7 1H61c-16 0-29-13-29-29Z"
+        fill="#F6B6C6"
+      />
+      {/* ear */}
+      <path
+        d="M52 38c-6 3-10 8-12 14 6-2 12-2 17 1-1-6-2-11-5-15Z"
+        fill="#F2A7BA"
+      />
+      {/* snout */}
+      <path
+        d="M22 80c0-8 8-14 18-14h6c6 0 11 4 11 10 0 10-12 20-23 20-6 0-12-6-12-16Z"
+        fill="#F2A7BA"
+      />
+      {/* nostril */}
+      <circle cx="36" cy="80" r="2.8" fill="#111827" />
+      {/* eye */}
+      <circle cx="56" cy="66" r="4" fill="#111827" />
+      {/* coin slot */}
+      <path
+        d="M70 44c10-6 22-6 32 0"
+        stroke="#E98FA9"
+        strokeWidth="8"
+        strokeLinecap="round"
+      />
+      {/* legs */}
+      <path
+        d="M52 104c0 6-4 10-10 10s-10-4-10-10 4-10 10-10 10 4 10 10Z"
+        fill="#F2A7BA"
+      />
+      <path
+        d="M108 104c0 6-4 10-10 10s-10-4-10-10 4-10 10-10 10 4 10 10Z"
+        fill="#F2A7BA"
+      />
+      {/* tail */}
+      <path
+        d="M118 70c8 0 12 4 12 10 0 7-6 11-14 10"
+        stroke="#E98FA9"
+        strokeWidth="6"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function StartScreen({ onStart }: { onStart: () => void }) {
+  return (
+    <div className="startWrap">
+      <div className="startHero">
+        <PiggyIcon className="startHeroIcon" />
+      </div>
+
+      <div className="startTitle">
+        주식 경보 요건을 확인하고
+        <br />한 번에 정리해요.
+      </div>
+      <div className="startDesc">
+        종목코드를 입력하면 투자주의/투자경고/단기과열 요건을 OHLCV 기반으로
+        근사 계산해 보여줍니다.
+      </div>
+
+      <div className="startPoints">
+        <div className="startPoint">
+          <div className="startPointIcon startPointIcon--yellow" />
+          <div className="startPointText">
+            <div className="startPointTitle">종목코드로 바로 분석해요</div>
+            <div className="startPointDesc">원하는 종목을 입력해 즉시 확인</div>
+          </div>
+        </div>
+        <div className="startPoint">
+          <div className="startPointIcon startPointIcon--blue" />
+          <div className="startPointText">
+            <div className="startPointTitle">기준가(근사)도 같이 보여줘요</div>
+            <div className="startPointDesc">투자주의/경고 기준가를 계산</div>
+          </div>
+        </div>
+        <div className="startPoint">
+          <div className="startPointIcon startPointIcon--pink" />
+          <div className="startPointText">
+            <div className="startPointTitle">모바일(WebView)에 최적화</div>
+            <div className="startPointDesc">간결한 카드 UI로 빠르게 확인</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="startCtaBar">
+        <button type="button" className="startCta" onClick={onStart}>
+          시작하기
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const apiBase = (import.meta as any).env?.VITE_API_BASE_URL || "";
 
+  const [started, setStarted] = useState(false);
   const [code, setCode] = useState("005930");
   const [date, setDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [report, setReport] = useState<Report | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  if (!started) {
+    return (
+      <div className="page startPage">
+        <header className="startTop">
+          <div className="startTopTitle">주식 지정 요건 분석</div>
+        </header>
+        <StartScreen onStart={() => setStarted(true)} />
+      </div>
+    );
+  }
 
   async function run() {
     const c = code.trim();

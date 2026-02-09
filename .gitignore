@@ -17,8 +17,6 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
-*.swo
-
-# Logs and databases
+*.swo# Logs and databases
 *.log
 *.sqlite3

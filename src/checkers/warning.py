@@ -56,6 +56,18 @@ def check_warning(df):
 
     is_triggered = cond_3d or cond_5d or cond_15d
 
+    # Description 생성: 조건 충족 여부에 따라 동적으로 표시
+    desc_3d_base = "당일 종가가 3일 전날 종가 대비 100% 이상 상승"
+    desc_5d_base = "당일 종가가 5일 전날 종가 대비 60% 이상 상승"
+    desc_15d_base = "당일 종가가 15일 전날 종가 대비 100% 이상 상승"
+    
+    # KRX 공식: "해당일의 종가가 최근 15일 종가 중 최고가인 경우에 한함"
+    # 따라서 모든 조건에 최근 15일 최고가 조건이 필요하지만,
+    # description에는 실제로 해당 조건이 충족되었을 때만 표시
+    desc_3d = desc_3d_base + (" (최근 15일 종가 최고가)" if is_highest_close_15d else "")
+    desc_5d = desc_5d_base + (" (최근 15일 종가 최고가)" if is_highest_close_15d else "")
+    desc_15d = desc_15d_base + (" (최근 15일 종가 최고가)" if is_highest_close_15d else "")
+
     details = {
         "초단기급등(3일)": {
             "val": change_3d,
@@ -63,7 +75,7 @@ def check_warning(df):
             "triggered": bool(cond_3d),
             "target_price": target_price_3d,
             "at_max": is_highest_close_15d,
-            "description": "당일 종가가 3일 전날 종가 대비 100% 이상 상승 (+ 최근 15일 종가 최고가)",
+            "description": desc_3d,
         },
         "단기급등(5일)": {
             "val": change_5d,
@@ -71,7 +83,7 @@ def check_warning(df):
             "triggered": bool(cond_5d),
             "target_price": target_price_5d,
             "at_max": is_highest_close_15d,
-            "description": "당일 종가가 5일 전날 종가 대비 60% 이상 상승 (+ 최근 15일 종가 최고가)",
+            "description": desc_5d,
         },
         "중장기급등(15일)": {
             "val": change_15d,
@@ -79,7 +91,7 @@ def check_warning(df):
             "triggered": bool(cond_15d),
             "target_price": target_price_15d,
             "at_max": is_highest_close_15d,
-            "description": "당일 종가가 15일 전날 종가 대비 100% 이상 상승 (+ 최근 15일 종가 최고가)",
+            "description": desc_15d,
         }
     }
 
